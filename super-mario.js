@@ -17,7 +17,6 @@ function draw() {
   fill(60, 200, 90);
   rect(0, 330, width, 70);
   updateJump();
-  // moveRight();
 
   drawPlayer();
 }
@@ -35,19 +34,8 @@ function jump() {
 function keyPressed() {
   if (key === " ") jump();
 
-  // if (key === "d") moveRight();
 }
 
-// ==================================================
-// RIGHT MOVEMENT
-// Goal: make the player move to the right
-//
-// ==================================================
-/*
-function moveRight() {
-  x = x + 5; // move player 5 pixels to the right
-}
-*/
 
 // ==================================================
 // 🧠 JUMP LOGIC
@@ -72,5 +60,5 @@ function updateJump() {
 // ==================================================
 function drawPlayer() {
   fill(255, 60, 60);
-  rect(x, y, 40, 40); // ← now uses x and y
+  rect(x, y, 40, 40);
 }
