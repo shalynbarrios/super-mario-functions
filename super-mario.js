@@ -1,10 +1,18 @@
-// Player position
+// Player position & physics
 let x = 100;
-let y = 300;
+let y = 290;
+let vy = 0;           // vertical velocity
+let playerW = 40;
+let playerH = 40;
+let gravity = 0.6;
+let jumpForce = -12;
+let onGround = false;
 
-// Jump state
-let jumping = false;
-let jumpFrame = 0;
+// Block
+let block = { x: 200, y: 300, w: 80, h: 30 };
+
+// Ground level
+let groundY = 330;
 
 function setup() {
   createCanvas(600, 400);
@@ -15,53 +23,58 @@ function draw() {
 
   // ground
   fill(60, 200, 90);
-  rect(0, 330, width, 70);
-  updateJump();
+  rect(0, groundY, width, 70);
 
+  // draw block
+  fill(139, 90, 43);
+  rect(block.x, block.y, block.w, block.h);
+
+  // hold to move
+  if (keyIsDown(68)) x += 5; // D
+  if (keyIsDown(65)) x -= 5; // A
+
+  applyPhysics();
   drawPlayer();
 }
 
 // ==================================================
-// JUMP FUNCTION
+// PHYSICS & COLLISION
 // ==================================================
-function jump() {
-  if (!jumping) {
-    jumping = true;
-    jumpFrame = 0;
+function applyPhysics() {
+  // Apply gravity
+  vy += gravity;
+  y += vy;
+
+  onGround = false;
+
+  // Player edges
+  let playerBottom = y + playerH;
+  let playerRight = x + playerW;
+  let playerLeft = x;
+
+  // Check landing on block (only from above, when falling)
+  let overlapX = playerRight > block.x && playerLeft < block.x + block.w;
+  if (overlapX && vy >= 0 && playerBottom >= block.y && playerBottom <= block.y + 15) {
+    y = block.y - playerH;
+    vy = 0;
+    onGround = true;
+  }
+
+  // Check landing on ground
+  if (y + playerH >= groundY) {
+    y = groundY - playerH;
+    vy = 0;
+    onGround = true;
   }
 }
 
+// ==================================================
+// JUMP (Space or W)
+// ==================================================
 function keyPressed() {
-  if (key === " ") jump();
-  
-  if (key === "d") moveRight();
-  
-  if (key === "a") moveLeft();
-}
-
-function moveRight() {
-  x = x+5;
-}
-
-function moveLeft () {
-  x = x-5;
-}
-
-// ==================================================
-// 🧠 JUMP LOGIC
-// ==================================================
-function updateJump() {
-  if (!jumping) return;
-
-  jumpFrame++;
-
-  let t = jumpFrame / 30;
-  let height = sin(t * PI) * 120;
-  y = 300 - height;
-
-  if (jumpFrame >= 30) {
-    jumping = false;
-    y = 300;
+  if ((keyCode === 32 || keyCode === 87) && onGround) {
+    vy = jumpForce;
+    onGround = false;
   }
 }
 
@@ -70,5 +83,5 @@ function updateJump() {
 // ==================================================
 function drawPlayer() {
   fill(255, 60, 60);
-  rect(x, y, 40, 40);
+  rect(x, y, playerW, playerH);
 }
