@@ -17,7 +17,6 @@ function draw() {
   fill(60, 200, 90);
   rect(0, 330, width, 70);
   updateJump();
-  // moveRight();
 
   drawPlayer();
 }
